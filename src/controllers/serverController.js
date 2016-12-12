@@ -78,8 +78,9 @@ serverController.prototype.$__sendPacket = function(testId, packet, type) {
   };
 
   var message = new Buffer(JSON.stringify(packetContainer));
-  console.log('Sending Packets to .. ' +  config.__clientConfig.clientHost + ':' + config.__clientConfig.clientPort + ''.green);
-  server.send(message, 0, message.length, config.__clientConfig.clientPort, config.__clientConfig.clientHost);
+  var ip = config.__clientConfig.clientRemoteIp || config.__clientConfig.clientHost;
+  console.log('Sending Packets to .. ' +  ip + ':' + config.__clientConfig.clientPort + ''.green);
+  server.send(message, 0, message.length, config.__clientConfig.clientPort, ip);
 };
 
 serverController.prototype.$__handleTestStartup = function(message) {

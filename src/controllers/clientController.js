@@ -38,6 +38,10 @@ clientController.prototype.$__sendPacket = function(packet, type) {
     content: packet,
   };
 
+  if(this.__args.udpPacketSize) {
+    packetContainer.buffer = util.randomString(this.__args.udpPacketSize);
+  }
+
   var message = new Buffer(JSON.stringify(packetContainer));
   console.log('Sending Packets to .. ' + this.__args.serverHost + ':' + this.__args.serverPort + ''.green);
   socket.send(message, 0, message.length, this.__args.serverPort, this.__args.serverHost);
@@ -87,8 +91,21 @@ clientController.prototype.$__handleUdpPingReponse = function(message) {
   }
   var now = moment();
   var sentDate = moment(new Date(message.content.client_date_sent));
-  var rtt = now.diff(sentDate, 'ms');
-  console.log('UDP Ping Response: '+ rtt + ' ms'.green);
+  var rtt = now.diff(sentDate, 'ms');console.log('UDP Ping Response: '+ rtt + ' ms'.green);
+  if(!this.testResults.maxPing || rtt > this.testResults.maxPing) {
+    this.testResults.maxPing = rtt;
+  }
+  if(!this.testResults.minPing || rtt < this.testResults.minPing) {
+    this.testResults.minPing = rtt;
+  }
+  message.rtt = rtt;
+
+  var total = 0;
+  for(var x = 0; x < this.testResults.pings.length; x++) {
+    var res = this.testResults.pings[x];
+    total += res.rtt;
+  }
+  this.testResults.avgPing = (total / this.testResults.pings.length).toFixed(0);
   this.testResults.pings.push(message);
 };
 
@@ -103,13 +120,25 @@ clientController.prototype.$__runUdpPing_sendPings = function() {
     order: this.testResults.pingOrder,
   }, 'udpPing');
   this.testResults.pingOrder += 1;
-  if(this.testResults.pingOrder < this.__args.count) {
+  if(this.testResults.pingOrder <= this.__args.count) {
     setTimeout(function () {
       self.$__runUdpPing_sendPings();
     }, this.__args.delay);
   } else {
-    console.log('test done!'.green);
+    setTimeout(function() {
+      self.$__runUdpPing_outputResults();
+    },1000);
   }
-}
+};
+
+clientController.prototype.$__runUdpPing_outputResults = function() {
+  console.log('test done!'.green);
+  console.log('-----------Results-----------'.green);
+  console.log('UDP Pings Sent : ' + (this.testResults.pingOrder-1)+"".green);
+  console.log('UDP Pings Received : ' + this.testResults.pings.length+"".green);
+  console.log('Min : ' + this.testResults.minPing+"".green);
+  console.log('AVG : ' + this.testResults.avgPing+"".green);
+  console.log('Max : ' + this.testResults.maxPing+"".green);
+};
 
 module.exports = clientController;

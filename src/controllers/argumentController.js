@@ -5,8 +5,8 @@ var argumentController = function() {
   this.env = process.env.node_env;
 
   this.defaults = {
-    udpPacketSize : 500,
-    count: 100,
+    udpPacketSize : 1900,
+    count: 1000,
     delay: 1,
     serverHost: '127.0.0.1',
     clientHost: '127.0.0.1',
@@ -40,7 +40,7 @@ argumentController.prototype.printArgs = function() {
 argumentController.prototype.$__validateArguments = function() {
   var valid = true;
 
-  if(!this.arguments.client || !this.arguments.server) {
+  if(!this.arguments.client && !this.arguments.server) {
     console.log('Must Specify Client and/or Server Configuration');
     valid = false;
   }
