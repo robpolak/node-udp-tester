@@ -1,0 +1,29 @@
+{
+  "name": "node-udp-tester",
+  "version": "1.0.0",
+  "description": "Node UDP Testing Platform",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/robpolak/node-udp-tester.git"
+  },
+  "keywords": [
+    "Node",
+    "UDP",
+    "Test"
+  ],
+  "author": "Rob Polak",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/robpolak/node-udp-tester/issues"
+  },
+  "homepage": "https://github.com/robpolak/node-udp-tester#readme",
+  "dependencies": {
+    "colors": "^1.1.2",
+    "minimist": "^1.2.0",
+    "moment": "^2.17.1"
+  }
+}
